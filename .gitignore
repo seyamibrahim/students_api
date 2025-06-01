@@ -77,3 +77,4 @@ $RECYCLE.BIN/
 .env
 
 storage
+/config
