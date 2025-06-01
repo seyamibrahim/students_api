@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/seyamibrahim/students-api/internal/config"
+	"github.com/seyamibrahim/students-api/internal/http/handlers/student"
 )
 
 func main() {
@@ -23,9 +24,7 @@ func main() {
 	// setup router
 
 	router := http.NewServeMux()
-	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("Welcome to students api"))
-	})
+	router.HandleFunc("POST /api/students",student.New())
 
 	//setup server
 
@@ -49,7 +48,7 @@ func main() {
 
 	<-done
 
-	
+
 	slog.Info("shutting down the server")
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
