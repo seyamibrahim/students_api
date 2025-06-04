@@ -37,8 +37,9 @@ func main() {
 	router.HandleFunc("GET /api/students/{id}", student.GetById(storage))
 	router.HandleFunc("GET /api/students", student.GetStudents(storage))
 	router.HandleFunc("DELETE /api/students/{id}", student.DeleteStudent(storage))
+	router.HandleFunc("PUT /api/students/{id}", student.UpdateStudent(storage))
 
-	
+
 	//setup server
 
 	server := http.Server{
@@ -46,6 +47,8 @@ func main() {
 		Handler: router,
 	}
 	fmt.Printf("Server is running on %s\n", cfg.Addr)
+
+
 	// gracefully shutdown
 
 	done := make(chan os.Signal, 1)
