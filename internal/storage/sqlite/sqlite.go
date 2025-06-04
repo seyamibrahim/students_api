@@ -106,3 +106,35 @@ func (s *Sqlite) GetStudents() ([]types.Student, error) {
 	}
 	return students, nil
 }
+
+func (s *Sqlite) DeleteStudent(id int64) error{
+
+	stmt, err := s.Db.Prepare("DELETE FROM students WHERE id == ?")
+
+
+	if err != nil{
+		return fmt.Errorf("failed to prepare")
+	}
+
+
+	defer stmt.Close()
+
+	res, err := stmt.Exec(id)
+
+	if err != nil {
+		return  fmt.Errorf("failed to execute delete %w", err)
+	}
+
+
+	rowsaffect, err := res.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("failed to retreive rowaffect %w", err)
+	}
+
+	if rowsaffect == 0{
+		return fmt.Errorf("no student found with id %d", id)
+	}
+
+	return  nil
+
+}

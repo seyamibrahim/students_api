@@ -63,7 +63,7 @@ func GetById(storage storage.Storage) http.HandlerFunc {
 
 		intId, err := strconv.ParseInt(id, 10, 64)
 		if err != nil {
-			slog.Info("error in id", slog.String("id", id))
+			slog.Info("invalid id", slog.String("id", id))
 			response.WriteJson(w, http.StatusBadRequest, response.GeneralError(err))
 			return
 
@@ -79,15 +79,35 @@ func GetById(storage storage.Storage) http.HandlerFunc {
 		response.WriteJson(w, http.StatusOK, student)
 	}
 }
+func DeleteStudent(storage storage.Storage) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		id := r.PathValue("id")
+		slog.Info("delete a student with ", slog.String("id", id))
+
+		intId, err := strconv.ParseInt(id, 10, 64)
+		if err != nil {
+			slog.Info("invalid id : ", slog.String("id", id))
+			response.WriteJson(w, http.StatusBadRequest, response.GeneralError(err))
+			return
+
+		}
+		err = storage.DeleteStudent(intId)
+		if err != nil {
+			slog.Info("student does not found with", slog.String("id", id))
+			response.WriteJson(w, http.StatusInternalServerError, err.Error())
+			return
+		}
+		response.WriteJson(w, http.StatusOK, fmt.Sprintf("student with id %d deleted successfully", intId))
+	}
+}
 
 func GetStudents(storage storage.Storage) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		
 
 		slog.Info("getting all students")
 
-		students , err := storage.GetStudents()
-		if err != nil{
+		students, err := storage.GetStudents()
+		if err != nil {
 			response.WriteJson(w, http.StatusInternalServerError, err)
 		}
 		response.WriteJson(w, http.StatusOK, students)
